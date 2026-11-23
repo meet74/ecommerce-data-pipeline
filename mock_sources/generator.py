@@ -20,6 +20,8 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Any
 
 UTC = timezone.utc
+# bump when generator output changes, so cached datasets are rebuilt
+GENERATOR_VERSION = 2
 
 
 @dataclass
@@ -152,10 +154,10 @@ def pick_weighted(rng: random.Random, pairs):
     return rng.choices([p for p in pairs], weights=[p[-1] for p in pairs])[0]
 
 
-def messy_case(rng: random.Random, s: str, rate: float) -> str:
+def messy_case(rng: random.Random, s: str, rate: float, shout: bool = True) -> str:
     r = rng.random()
     if r < rate / 2:
-        return s.upper()
+        return s.upper() if shout else f" {s}"
     if r < rate:
         return f" {s} " if rng.random() < 0.5 else s + " "
     return s
@@ -216,7 +218,7 @@ class Builder:
             p["weight"] = w
         self.products = products
         for p in products:
-            rec = {"id": p["id"], "title": messy_case(rng, p["title"], 0.10), "product_type": p["type"] if rng.random() > 0.04 else p["type"].lower(),
+            rec = {"id": p["id"], "title": messy_case(rng, p["title"], 0.10, shout=False), "product_type": p["type"] if rng.random() > 0.04 else p["type"].lower(),
                    "vendor": "Maple & Pine Supply Co." if rng.random() > 0.1 else None, "status": "active",
                    "created_at": iso(p["created"]), "updated_at": iso(p["created"]),
                    "variants": [{"id": p["variant_id"], "sku": p["sku"], "price": money(p["price"]), "cost": money(p["cost"])}]}

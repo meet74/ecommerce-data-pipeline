@@ -12,11 +12,11 @@ from pathlib import Path
 import uvicorn
 
 from .app import Faults, create_app
-from .generator import GenConfig, Dataset, generate
+from .generator import GENERATOR_VERSION, GenConfig, Dataset, generate
 
 
 def load_dataset(cfg: GenConfig, cache_dir: str = "data/mock") -> Dataset:
-    key = hashlib.md5(repr(sorted(asdict(cfg).items())).encode()).hexdigest()[:10]
+    key = hashlib.md5(repr((GENERATOR_VERSION, sorted(asdict(cfg).items()))).encode()).hexdigest()[:10]
     path = Path(cache_dir) / f"dataset-{key}.pkl.gz"
     if path.exists():
         with gzip.open(path, "rb") as fh:
