@@ -2,7 +2,7 @@ PY := .venv/bin/python
 PIP := .venv/bin/pip
 TARGET ?= duckdb
 
-.PHONY: setup test serve run demo slack-dry-run bench screenshots lint-sql clean
+.PHONY: setup test serve run demo slack-dry-run bench screenshots check-workflow clean
 
 setup:
 	python3 -m venv .venv
@@ -32,6 +32,10 @@ bench:
 
 screenshots:
 	node scripts/screenshots.js
+
+# needs n8n installed and the mock sources running (make serve); see the script header
+check-workflow:
+	$(PY) scripts/check_workflow.py
 
 clean:
 	rm -rf data reports/*.html reports/*.json dbt_project/target dbt_project/logs
