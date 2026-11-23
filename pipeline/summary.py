@@ -1,7 +1,7 @@
 """Collect the numbers shown in the Slack message and on the dashboard header."""
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from .warehouse import Warehouse
 
@@ -51,7 +51,7 @@ def build_summary(wh: Warehouse, report_date: date | None = None, run_id: str | 
     checked = int(wh.scalar("SELECT COUNT(*) FROM marts.fct_payment_reconciliation WHERE issue_type <> 'pending_charge'") or 0)
     issues = int(recon["n"].sum()) if not recon.empty else 0
     summary = {
-        "generated_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "report_date": str(day),
         "day": {
             "orders": int(row["orders"]), "gross_revenue_cad": _f(row["gross_revenue_cad"]), "aov_cad": _f(row["aov_cad"]),

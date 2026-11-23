@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import time
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -23,11 +23,12 @@ from .warehouse import Warehouse, frame_for
 
 
 def utcnow() -> datetime:
-    return datetime.utcnow().replace(microsecond=0)
+    return datetime.now(timezone.utc).replace(tzinfo=None, microsecond=0)
 
 
 def new_run_id() -> str:
-    return datetime.utcnow().strftime("%Y%m%dT%H%M%S") + f"{datetime.utcnow().microsecond // 1000:03d}"
+    now = datetime.now(timezone.utc)
+    return now.strftime("%Y%m%dT%H%M%S") + f"{now.microsecond // 1000:03d}"
 
 
 def get_watermark(wh: Warehouse, source: str, entity: str) -> datetime | None:
