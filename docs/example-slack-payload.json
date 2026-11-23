@@ -1,0 +1,63 @@
+{
+  "text": "Store summary 2026-06-30: $9,974 revenue, 100 orders",
+  "blocks": [
+    {
+      "type": "header",
+      "text": {
+        "type": "plain_text",
+        "text": "Store summary for 2026-06-30"
+      }
+    },
+    {
+      "type": "section",
+      "fields": [
+        {
+          "type": "mrkdwn",
+          "text": "*Revenue (CAD, ex tax)*\n$9,974 (up 27.5% vs 7-day avg)"
+        },
+        {
+          "type": "mrkdwn",
+          "text": "*Net revenue*\n$9,165"
+        },
+        {
+          "type": "mrkdwn",
+          "text": "*Orders*\n100 (up 19.3% vs 7-day avg)"
+        },
+        {
+          "type": "mrkdwn",
+          "text": "*Average order value*\n$99.74"
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Customers:* 9 new, 91 returning (9% new)\n*Refunds today:* $416 | *Processor fees:* $393\n*Last 7 days:* $58,325 from 611 orders"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Top products, last 30 days*\n1. Cedar Burr Grinder - $30,236 (326 units)\n2. Willow Holiday Box - $26,774 (379 units)\n3. Summit Scale - $19,565 (494 units)"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Payment reconciliation:* 98 of 26,742 rows flagged - 32 amount mismatch, 32 missing charge, 16 orphan charge, 10 refund mismatch, 8 currency mismatch"
+      }
+    },
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": "Pipeline OK | 324 rows read, 655 written | tests: 84 passed, 1 warning, 0 failed"
+        }
+      ]
+    }
+  ]
+}

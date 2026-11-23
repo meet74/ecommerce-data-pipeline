@@ -1,0 +1,328 @@
+{
+  "name": "E-commerce daily KPI summary",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 7 * * *"
+            }
+          ]
+        }
+      },
+      "id": "72a0e6cd-e85f-5c36-b96d-4389ad51fb3d",
+      "name": "Every day at 7am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "command": "cd \"$PIPELINE_DIR\" && make run"
+      },
+      "id": "662a91c5-8746-5918-a2bf-93d615d2d460",
+      "name": "Run pipeline",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        260,
+        200
+      ],
+      "onError": "continueErrorOutput",
+      "notes": "Runs extract, load, dbt models, dbt tests and the report. A non-zero exit sends the run to the alert branch."
+    },
+    {
+      "parameters": {
+        "command": "cat \"$PIPELINE_DIR/reports/summary.json\""
+      },
+      "id": "d2e45a0f-aada-55ec-8090-d01dabe25539",
+      "name": "Read summary.json",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        520,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const summary = JSON.parse($input.first().json.stdout);\nconst failedTests = (summary.data_tests && summary.data_tests.failed) || 0;\nconst pipelineOk = !summary.pipeline || summary.pipeline.status === 'success';\nreturn [{ json: { summary, healthy: pipelineOk && failedTests === 0, failedTests } }];"
+      },
+      "id": "31c62b41-3eba-595c-9ef8-4ebc65d5c4a3",
+      "name": "Parse summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "3d003608-18b2-51b9-8af1-47af4ecec916",
+              "leftValue": "={{ $json.healthy }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d9f6f9f9-35a3-5420-ad35-8c83f6b2882c",
+      "name": "Pipeline healthy?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "command": "cd \"$PIPELINE_DIR\" && .venv/bin/python -m pipeline slack --dry-run"
+      },
+      "id": "2dc5cea0-49a4-5840-b399-752a83b1f462",
+      "name": "Render Slack message",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        0
+      ],
+      "notes": "The Python package builds the Block Kit payload from summary.json; --dry-run prints it instead of posting."
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = JSON.parse($input.first().json.stdout);\nreturn [{ json: { text: payload.text, blocks: JSON.stringify({ blocks: payload.blocks }) } }];"
+      },
+      "id": "de8f2ef1-101f-591f-81cd-0309f0f95bfb",
+      "name": "Parse Slack message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "store-metrics",
+          "mode": "name"
+        },
+        "messageType": "block",
+        "blocksUi": "={{ $json.blocks }}",
+        "text": "={{ $json.text }}",
+        "otherOptions": {}
+      },
+      "id": "906f8d5a-a100-5143-a40a-c36d490dfa8e",
+      "name": "Post daily summary",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1820,
+        0
+      ],
+      "credentials": {
+        "slackApi": {
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nlet reason;\nif (item.execution && item.execution.error) {\n  reason = `Workflow \"${item.workflow.name}\" failed at node \"${item.execution.lastNodeExecuted}\": ${item.execution.error.message}`;\n} else if (item.summary) {\n  const s = item.summary;\n  reason = `Pipeline ran but ${item.failedTests} data test(s) failed or the load did not finish (status: ${(s.pipeline && s.pipeline.status) || 'unknown'}).`;\n} else {\n  const tail = String(item.error || '').trim().split('\\n').slice(-6).join('\\n');\n  reason = `make run failed.\\n${tail}`;\n}\nreturn [{ json: { text: `:rotating_light: Daily e-commerce pipeline needs attention\\n${reason}` } }];"
+      },
+      "id": "8481b110-3eda-5b18-a3ee-beb0bd9cdff0",
+      "name": "Write failure message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "store-metrics",
+          "mode": "name"
+        },
+        "messageType": "text",
+        "text": "={{ $json.text }}",
+        "otherOptions": {}
+      },
+      "id": "f3bd6aec-30e1-5ca8-9832-b72641109a94",
+      "name": "Post failure alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1560,
+        420
+      ],
+      "credentials": {
+        "slackApi": {
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "7d057843-6592-5c37-a405-f565bd89ea56",
+      "name": "On workflow error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        420
+      ],
+      "notes": "Fires when any node fails. Set this workflow as its own error workflow under Settings."
+    }
+  ],
+  "connections": {
+    "Every day at 7am": {
+      "main": [
+        [
+          {
+            "node": "Run pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run pipeline": {
+      "main": [
+        [
+          {
+            "node": "Read summary.json",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write failure message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read summary.json": {
+      "main": [
+        [
+          {
+            "node": "Parse summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse summary": {
+      "main": [
+        [
+          {
+            "node": "Pipeline healthy?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pipeline healthy?": {
+      "main": [
+        [
+          {
+            "node": "Render Slack message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write failure message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render Slack message": {
+      "main": [
+        [
+          {
+            "node": "Parse Slack message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Slack message": {
+      "main": [
+        [
+          {
+            "node": "Post daily summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write failure message": {
+      "main": [
+        [
+          {
+            "node": "Post failure alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On workflow error": {
+      "main": [
+        [
+          {
+            "node": "Write failure message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

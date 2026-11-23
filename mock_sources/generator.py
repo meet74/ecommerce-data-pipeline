@@ -21,7 +21,7 @@ from typing import Any
 
 UTC = timezone.utc
 # bump when generator output changes, so cached datasets are rebuilt
-GENERATOR_VERSION = 2
+GENERATOR_VERSION = 3
 
 
 @dataclass
@@ -242,11 +242,15 @@ class Builder:
         acq_days = rng.choices(range(n_days), weights=weights, k=cfg.n_customers)
         acq_days.sort()
         customers = []
+        used_emails: set[str] = set()
         for n, di in enumerate(acq_days):
             country = "CA" if rng.random() < 0.7 else "US"
             region = pick_weighted(rng, CA_PROV if country == "CA" else US_STATE)
             first, last = rng.choice(FIRST), rng.choice(LAST)
             email = f"{first}.{last}{rng.randint(1, 9999)}@example.{rng.choice(['com', 'com', 'com', 'net', 'org'])}".lower()
+            while email in used_emails:
+                email = f"{first}.{last}{rng.randint(1, 99999)}@example.com".lower()
+            used_emails.add(email)
             c = {"idx": n, "id": 6_200_000_000_000 + n, "first": first, "last": last, "email": email, "country": country,
                  "region": region, "day": di, "rate": rng.lognormvariate(math.log(0.95), 0.75),
                  "life": rng.expovariate(1 / 250), "twin_id": None}
@@ -380,7 +384,7 @@ class Builder:
             events: list[tuple[int, str, dict]] = []
             rec = o["rec"]
             ts = o["ts"]
-            if not o["test"] and rng.random() < cfg.cancel_rate:
+            if not o["test"] and rng.random() < cfg.cancel_rate and ts + 6 * 3600 <= self.end_ts:
                 rec["financial_status"] = "pending"
                 cts = ts + rng.randint(1800, 6 * 3600)
                 events.append((cts, "cancel", {}))
@@ -488,7 +492,7 @@ class Builder:
             ts = self.day_ts(rng.randrange(len(self.days)))
             cid = 6_500_000_000_000 + i
             ctry = rng.choice(["CA", "US"])
-            rec = {"id": cid, "email": f"{first}.{last}{rng.randint(1, 9999)}@example.com".lower(), "first_name": first, "last_name": last,
+            rec = {"id": cid, "email": f"{first}.{last}.signup{i}@example.com".lower(), "first_name": first, "last_name": last,
                    "phone": None, "country": ctry, "state": rng.choice(["enabled", "disabled"]), "accepts_marketing": True,
                    "created_at": iso(ts), "updated_at": iso(ts)}
             self.put("shopify.customers", ts, cid, rec)

@@ -1,0 +1,363 @@
+{
+  "full_run": {
+    "wall_seconds": 21.3,
+    "stages_seconds": {
+      "extract_load": 12.02,
+      "transform": 4.91,
+      "test": 3.75,
+      "report": 0.24,
+      "total": 20.93
+    },
+    "entities": [
+      {
+        "entity": "products",
+        "rows_read": 60,
+        "inserted": 60,
+        "updated": 0,
+        "unchanged": 0,
+        "rows_written": 60,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.029
+      },
+      {
+        "entity": "customers",
+        "rows_read": 4631,
+        "inserted": 4631,
+        "updated": 0,
+        "unchanged": 0,
+        "rows_written": 4631,
+        "requests": 20,
+        "retries": 1,
+        "rate_limited": 0,
+        "seconds": 0.713
+      },
+      {
+        "entity": "orders",
+        "rows_read": 27741,
+        "inserted": 27741,
+        "updated": 0,
+        "unchanged": 0,
+        "rows_written": 77254,
+        "requests": 113,
+        "retries": 2,
+        "rate_limited": 1,
+        "seconds": 3.914
+      },
+      {
+        "entity": "charges",
+        "rows_read": 26610,
+        "inserted": 26610,
+        "updated": 0,
+        "unchanged": 0,
+        "rows_written": 26610,
+        "requests": 274,
+        "retries": 7,
+        "rate_limited": 2,
+        "seconds": 6.344
+      },
+      {
+        "entity": "refunds",
+        "rows_read": 1450,
+        "inserted": 1450,
+        "updated": 0,
+        "unchanged": 0,
+        "rows_written": 1450,
+        "requests": 6,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.063
+      },
+      {
+        "entity": "payouts",
+        "rows_read": 1075,
+        "inserted": 1075,
+        "updated": 0,
+        "unchanged": 0,
+        "rows_written": 1075,
+        "requests": 12,
+        "retries": 1,
+        "rate_limited": 0,
+        "seconds": 0.592
+      },
+      {
+        "entity": "refunds",
+        "rows_read": 1444,
+        "inserted": 1444,
+        "updated": 0,
+        "unchanged": 0,
+        "rows_written": 1444,
+        "requests": 15,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.076
+      }
+    ],
+    "data_tests": {
+      "passed": 84,
+      "warned": 1,
+      "failed": 0,
+      "duration_s": 3.72
+    }
+  },
+  "incremental_run": {
+    "wall_seconds": 10.6,
+    "stages_seconds": {
+      "extract_load": 0.32,
+      "transform": 5.75,
+      "test": 3.83,
+      "report": 0.28,
+      "total": 10.18
+    },
+    "entities": [
+      {
+        "entity": "charges",
+        "rows_read": 106,
+        "inserted": 100,
+        "updated": 5,
+        "unchanged": 1,
+        "rows_written": 105,
+        "requests": 2,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.032
+      },
+      {
+        "entity": "customers",
+        "rows_read": 13,
+        "inserted": 10,
+        "updated": 1,
+        "unchanged": 2,
+        "rows_written": 11,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.018
+      },
+      {
+        "entity": "orders",
+        "rows_read": 188,
+        "inserted": 101,
+        "updated": 86,
+        "unchanged": 1,
+        "rows_written": 527,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.048
+      },
+      {
+        "entity": "payouts",
+        "rows_read": 4,
+        "inserted": 2,
+        "updated": 0,
+        "unchanged": 2,
+        "rows_written": 2,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.014
+      },
+      {
+        "entity": "products",
+        "rows_read": 1,
+        "inserted": 0,
+        "updated": 0,
+        "unchanged": 1,
+        "rows_written": 0,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.022
+      },
+      {
+        "entity": "refunds",
+        "rows_read": 6,
+        "inserted": 5,
+        "updated": 0,
+        "unchanged": 1,
+        "rows_written": 5,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.016
+      },
+      {
+        "entity": "refunds",
+        "rows_read": 6,
+        "inserted": 5,
+        "updated": 0,
+        "unchanged": 1,
+        "rows_written": 5,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.015
+      }
+    ],
+    "data_tests": {
+      "passed": 84,
+      "warned": 1,
+      "failed": 0,
+      "duration_s": 3.79
+    }
+  },
+  "unchanged_rerun": {
+    "wall_seconds": 0.6,
+    "entities": [
+      {
+        "entity": "customers",
+        "rows_read": 1,
+        "inserted": 0,
+        "updated": 0,
+        "unchanged": 1,
+        "rows_written": 0,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.017
+      },
+      {
+        "entity": "products",
+        "rows_read": 1,
+        "inserted": 0,
+        "updated": 0,
+        "unchanged": 1,
+        "rows_written": 0,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.029
+      },
+      {
+        "entity": "charges",
+        "rows_read": 1,
+        "inserted": 0,
+        "updated": 0,
+        "unchanged": 1,
+        "rows_written": 0,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.017
+      },
+      {
+        "entity": "orders",
+        "rows_read": 1,
+        "inserted": 0,
+        "updated": 0,
+        "unchanged": 1,
+        "rows_written": 0,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.02
+      },
+      {
+        "entity": "payouts",
+        "rows_read": 2,
+        "inserted": 0,
+        "updated": 0,
+        "unchanged": 2,
+        "rows_written": 0,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.016
+      },
+      {
+        "entity": "refunds",
+        "rows_read": 1,
+        "inserted": 0,
+        "updated": 0,
+        "unchanged": 1,
+        "rows_written": 0,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.016
+      },
+      {
+        "entity": "refunds",
+        "rows_read": 1,
+        "inserted": 0,
+        "updated": 0,
+        "unchanged": 1,
+        "rows_written": 0,
+        "requests": 1,
+        "retries": 0,
+        "rate_limited": 0,
+        "seconds": 0.016
+      }
+    ]
+  },
+  "reconciliation": {
+    "missing_charge": {
+      "injected": 32,
+      "detected": 32
+    },
+    "orphan_charge": {
+      "injected": 16,
+      "detected": 16
+    },
+    "amount_mismatch": {
+      "injected": 32,
+      "detected": 32
+    },
+    "currency_mismatch": {
+      "injected": 8,
+      "detected": 8
+    },
+    "refund_mismatch": {
+      "injected": 10,
+      "detected": 10
+    }
+  },
+  "cleaning": {
+    "duplicate_orders": {
+      "injected": 213,
+      "flagged": 213
+    },
+    "test_orders": {
+      "injected": 327,
+      "flagged": 327
+    },
+    "duplicate_customers": {
+      "injected": 105,
+      "merged": 105
+    },
+    "cancelled_orders": {
+      "injected": 576,
+      "flagged": 576
+    }
+  },
+  "table_rows": {
+    "marts.daily_kpis": 546,
+    "marts.dim_customers": 4536,
+    "marts.fct_orders": 26726,
+    "marts.fct_payment_reconciliation": 26742,
+    "marts.monthly_cohort_retention": 171,
+    "marts.product_performance": 60,
+    "raw.shopify_customers": 4641,
+    "raw.shopify_order_lines": 49690,
+    "raw.shopify_orders": 27842,
+    "raw.shopify_products": 60,
+    "raw.shopify_refunds": 1455,
+    "raw.stripe_charges": 26710,
+    "raw.stripe_payouts": 1077,
+    "raw.stripe_refunds": 1449
+  },
+  "raw_rows_total": 112924,
+  "orders_valid": 26726,
+  "customers": 4536,
+  "date_range": [
+    "2025-01-01",
+    "2026-06-30"
+  ],
+  "mock_server": {
+    "requests": 456,
+    "rate_limited": 3,
+    "errors": 8
+  }
+}
