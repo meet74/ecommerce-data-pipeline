@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: int_calendar
+    columns:
+      - name: date_day
+        tests: [unique, not_null]
+  - name: int_fx_daily
+    columns:
+      - name: cad_per_unit
+        tests: [not_null]
+  - name: int_orders
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: fx_rate_cad
+        description: Null here means the order date has no exchange rate.
+        tests: [not_null]
+  - name: int_charges
+    columns:
+      - name: charge_id
+        tests: [unique, not_null]
+      - name: fx_rate_cad
+        tests: [not_null]

@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: One row per valid order (no test orders, duplicates or cancellations), money in CAD.
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: order_number
+        tests: [unique, not_null]
+      - name: customer_key
+        tests:
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_key
+      - name: customer_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: [new, returning, guest]
+      - name: revenue_cad
+        tests: [not_null, non_negative]
+  - name: dim_customers
+    columns:
+      - name: customer_key
+        tests: [unique, not_null]
+      - name: segment
+        tests:
+          - accepted_values:
+              values: [prospect, one_time, repeat]
+  - name: daily_kpis
+    columns:
+      - name: date_day
+        tests: [unique, not_null]
+      - name: orders
+        tests: [not_null, non_negative]
+      - name: gross_revenue_cad
+        tests: [not_null, non_negative]
+      - name: refund_rate
+        tests: [non_negative]
+  - name: monthly_cohort_retention
+    columns:
+      - name: retention_rate
+        tests: [not_null, non_negative]
+      - name: month_number
+        tests: [not_null, non_negative]
+  - name: product_performance
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('stg_shopify__products')
+              field: product_id
+  - name: fct_payment_reconciliation
+    columns:
+      - name: issue_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: [none, pending_charge, orphan_charge, missing_charge, currency_mismatch, amount_mismatch, refund_mismatch]

@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: Typed copies of the store and payments API records, loaded by the pipeline.
+    tables:
+      - name: shopify_orders
+      - name: shopify_order_lines
+      - name: shopify_customers
+      - name: shopify_products
+      - name: shopify_refunds
+      - name: stripe_charges
+      - name: stripe_refunds
+      - name: stripe_payouts

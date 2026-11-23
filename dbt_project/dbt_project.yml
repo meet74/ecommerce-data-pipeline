@@ -1,0 +1,36 @@
+name: ecommerce
+version: "1.0.0"
+config-version: 2
+profile: ecommerce
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+vars:
+  reconcile_tolerance_cad: 1.00     # allowed drift between layers, in CAD
+  recon_amount_tolerance: 0.005     # per-order charge vs order total, in currency units
+  recon_grace_minutes: 60           # orders this fresh may legitimately lack a charge
+  max_issue_rate: 0.02
+
+models:
+  ecommerce:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: table
+      +schema: intermediate
+    marts:
+      +materialized: table
+      +schema: marts
+
+seeds:
+  ecommerce:
+    +schema: staging
+    fx_rates:
+      +column_types:
+        rate_date: date
+        currency: varchar
+        cad_per_unit: numeric(12,6)
